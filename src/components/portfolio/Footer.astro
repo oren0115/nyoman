@@ -1,0 +1,49 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-border bg-card/30 py-8" role="contentinfo">
+  <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 md:flex-row md:px-6">
+    <nav aria-label="Social links" class="flex gap-6">
+      <a id="footer-github" href="https://github.com" target="_blank" rel="noopener noreferrer"
+        class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+        GitHub
+      </a>
+      <a id="footer-linkedin" href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+        class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+        LinkedIn
+      </a>
+      <a href="/admin" class="text-sm font-medium text-muted-foreground/40 transition-colors hover:text-muted-foreground">
+        Admin
+      </a>
+    </nav>
+    <p id="footer-copyright" class="text-sm text-muted-foreground">
+      &copy; {currentYear} Portfolio. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<script>
+  const API_BASE = import.meta.env.PUBLIC_API_URL || 'http://localhost:4000';
+
+  fetch(`${API_BASE}/api/settings`)
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data.success) return;
+      const s = data.data || {};
+      if (s.contact_github) {
+        const el = document.getElementById('footer-github') as HTMLAnchorElement;
+        if (el) el.href = s.contact_github;
+      }
+      if (s.contact_linkedin) {
+        const el = document.getElementById('footer-linkedin') as HTMLAnchorElement;
+        if (el) el.href = s.contact_linkedin;
+      }
+      if (s.footer_copyright) {
+        const el = document.getElementById('footer-copyright');
+        const year = new Date().getFullYear();
+        if (el) el.textContent = `© ${year} ${s.footer_copyright}`;
+      }
+    })
+    .catch(() => {});
+</script>

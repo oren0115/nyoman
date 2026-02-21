@@ -1,0 +1,147 @@
+---
+const navLinks = [
+  { href: "#home", label: "Home" },
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#projects", label: "Projects" },
+  { href: "#experience", label: "Experience" },
+  { href: "#testimonials", label: "Testimonials" },
+  { href: "#contact", label: "Contact" },
+];
+---
+
+<header
+  id="navbar"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  aria-label="Main navigation"
+>
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
+    <a href="#home" class="flex items-center gap-2 font-bold text-foreground transition-opacity hover:opacity-90">
+      <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-xs font-extrabold text-primary-foreground shadow-lg shadow-primary/30">
+        NA
+      </span>
+      <span class="hidden sm:inline text-foreground">Portfolio</span>
+    </a>
+
+    <ul class="hidden items-center gap-1 md:flex" role="list">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="nav-link rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="flex items-center gap-2">
+      <a
+        href="#contact"
+        class="btn-gradient inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold shadow-lg"
+      >
+        Hire Me
+      </a>
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card/50 md:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg id="menu-icon" class="h-5 w-5 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg id="close-icon" class="hidden h-5 w-5 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden border-t border-border bg-card/95 backdrop-blur-xl md:hidden" aria-hidden="true">
+    <ul class="flex flex-col px-4 py-4" role="list">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class="mobile-nav-link block rounded-lg px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-white/5"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+      <li class="mt-2">
+        <a href="#contact" class="btn-gradient block rounded-lg px-4 py-3 text-center font-semibold">
+          Hire Me
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const navbar = document.getElementById('navbar')!;
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn')!;
+  const mobileMenu = document.getElementById('mobile-menu')!;
+  const menuIcon = document.getElementById('menu-icon')!;
+  const closeIcon = document.getElementById('close-icon')!;
+
+  function updateNavbarScroll() {
+    if (window.scrollY > 20) {
+      navbar.classList.add('glass', 'border-b', 'border-border', 'shadow-lg', 'shadow-black/20');
+    } else {
+      navbar.classList.remove('glass', 'border-b', 'border-border', 'shadow-lg', 'shadow-black/20');
+    }
+  }
+
+  // Active section highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((link) => {
+            const href = link.getAttribute('href');
+            if (href === `#${entry.target.id}`) {
+              link.classList.add('text-foreground');
+              link.classList.remove('text-muted-foreground');
+            } else {
+              link.classList.remove('text-foreground');
+              link.classList.add('text-muted-foreground');
+            }
+          });
+        }
+      });
+    },
+    { rootMargin: '-40% 0px -50% 0px', threshold: 0 }
+  );
+
+  sections.forEach((section) => sectionObserver.observe(section));
+
+  function toggleMobileMenu() {
+    const isOpen = !mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden', isOpen);
+    menuIcon.classList.toggle('hidden', !isOpen);
+    closeIcon.classList.toggle('hidden', isOpen);
+    mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+    mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
+  }
+
+  window.addEventListener('scroll', updateNavbarScroll, { passive: true });
+  updateNavbarScroll();
+
+  mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+  mobileMenu.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>

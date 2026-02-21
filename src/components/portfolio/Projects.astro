@@ -1,0 +1,111 @@
+---
+const projects = [
+  {
+    title: "E-Commerce Platform",
+    description: "Full-stack online store with cart, checkout, and admin dashboard. Built for scale and conversion.",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=360&fit=crop",
+    tags: ["React", "Node.js", "MySQL", "Stripe"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    title: "SaaS Dashboard",
+    description: "Analytics and management dashboard with real-time charts, role-based access, and API integrations.",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=360&fit=crop",
+    tags: ["Next.js", "TypeScript", "Tailwind", "PostgreSQL"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    title: "Developer Portfolio",
+    description: "Modern portfolio site with dark mode, smooth animations, and optimized performance.",
+    image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=600&h=360&fit=crop",
+    tags: ["Astro", "React", "Tailwind"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    title: "API Gateway & Docs",
+    description: "Central API gateway with automated OpenAPI docs, rate limiting, and monitoring.",
+    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=360&fit=crop",
+    tags: ["Node.js", "Express", "Docker", "Redis"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    title: "Task Management App",
+    description: "Kanban-style task board with drag-and-drop, real-time sync, and team collaboration.",
+    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=360&fit=crop",
+    tags: ["React", "TypeScript", "WebSockets"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    title: "Mobile-First Landing",
+    description: "High-converting landing page with A/B testing, forms, and analytics integration.",
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=360&fit=crop",
+    tags: ["Next.js", "Tailwind", "Vercel"],
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+];
+---
+
+<section id="projects" class="relative border-t border-border bg-card/30 py-20 md:py-28" aria-labelledby="projects-heading">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <h2 id="projects-heading" class="section-reveal mb-4 text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl" data-section-reveal>
+      Featured Projects
+    </h2>
+    <p class="section-reveal mx-auto mb-12 max-w-2xl text-center text-muted-foreground" data-section-reveal>
+      A selection of projects I've built—from full-stack apps to developer tools.
+    </p>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project, i) => (
+        <article class="section-reveal card-hover-lift group overflow-hidden rounded-2xl border border-border bg-card/50 shadow-lg" data-section-reveal>
+          <a href={project.liveUrl} class="block">
+            <div class="relative aspect-video overflow-hidden bg-muted">
+              <img
+                src={project.image}
+                alt=""
+                width="600"
+                height="360"
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+            </div>
+          </a>
+          <div class="p-5">
+            <h3 class="mb-2 text-lg font-semibold text-foreground">{project.title}</h3>
+            <p class="mb-4 text-sm text-muted-foreground">{project.description}</p>
+            <div class="mb-4 flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span class="rounded-md bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary ring-1 ring-primary/20">{tag}</span>
+              ))}
+            </div>
+            <div class="flex gap-3">
+              <a
+                href={project.liveUrl}
+                class="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/30"
+              >
+                Live Demo
+                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <a
+                href={project.githubUrl}
+                class="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-foreground"
+              >
+                GitHub
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

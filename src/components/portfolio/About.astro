@@ -1,0 +1,47 @@
+---
+const stats = [
+  { value: "5+", label: "Years Experience" },
+  { value: "40+", label: "Projects Completed" },
+  { value: "15+", label: "Tech Stack" },
+];
+---
+
+<section id="about" class="relative border-t border-border bg-card/30 py-20 md:py-28" aria-labelledby="about-heading">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <div class="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
+      <div class="section-reveal" data-section-reveal>
+        <div class="relative inline-block">
+          <div class="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-[#06b6d4]/40 blur-lg opacity-60"></div>
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=480&h=600&fit=crop"
+            alt="Professional headshot"
+            width="480"
+            height="600"
+            class="relative aspect-[4/5] w-full max-w-sm rounded-2xl object-cover shadow-2xl"
+          />
+        </div>
+      </div>
+
+      <div>
+        <h2 id="about-heading" class="section-reveal mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl" data-section-reveal>
+          About Me
+        </h2>
+        <p class="section-reveal mb-6 text-lg leading-relaxed text-muted-foreground" data-section-reveal>
+          I'm a Web Developer focused on building scalable applications that solve real problems. I combine strong fundamentals with modern tools—React, TypeScript, Node.js—to deliver clean, maintainable code and great user experiences.
+        </p>
+        <p class="section-reveal mb-8 text-muted-foreground" data-section-reveal>
+          From idea to deployment, I care about performance, accessibility, and maintainability. I enjoy turning complex requirements into simple, reliable systems.
+        </p>
+
+        <div class="section-reveal grid grid-cols-3 gap-4" data-section-reveal>
+          {stats.map((stat) => (
+            <div class="rounded-xl border border-border bg-card/50 p-4 text-center shadow-sm transition-all hover:border-primary/30 hover:shadow-md">
+              <span class="block text-2xl font-bold text-primary md:text-3xl">{stat.value}</span>
+              <span class="text-sm font-medium text-muted-foreground">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
