@@ -139,14 +139,35 @@ export function MessagesInbox() {
                   </a>
                   <p className="mt-1 text-xs text-muted-foreground">{formatDate(selected.created_at)}</p>
                 </div>
-                <div className="flex gap-2">
-                  <a href={`mailto:${selected.email}?subject=Re: Portfolio Contact`}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/30">
-                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={`mailto:${selected.email}?subject=${encodeURIComponent("Re: Portfolio Contact")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/30"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
-                    Reply
+                    Reply via email
                   </a>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(selected.email);
+                        addToast("success", "Email address copied to clipboard");
+                      } catch {
+                        addToast("error", "Could not copy");
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-white/5"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h2m8 0h2a2 2 0 012 2v2m2 4a2 2 0 01-2 2h-8a2 2 0 01-2-2v-8a2 2 0 012-2h2" />
+                    </svg>
+                    Copy email
+                  </button>
                   <button onClick={() => handleDelete(selected.id)} disabled={deleting === selected.id}
                     className="rounded-lg border border-red-500/20 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/10 disabled:opacity-50">
                     {deleting === selected.id ? "..." : "Delete"}
