@@ -1,5 +1,5 @@
 import * as React from "react";
-import { adminApi } from "@/lib/api";
+import { adminApi, getImageUrl } from "@/lib/api";
 import type { AdminUser } from "@/lib/api";
 
 interface NavItem {
@@ -189,10 +189,14 @@ export function AdminShell({ children, currentPath = "" }: AdminShellProps) {
         >
           {/* Logo */}
           <div className="flex h-16 items-center gap-3 border-b border-border px-6">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
-              CMS
-            </div>
-            <span className="font-semibold text-foreground">Portfolio Admin</span>
+            {user?.avatar_url ? (
+              <img src={getImageUrl(user.avatar_url)} alt="" className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-border" />
+            ) : (
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
+                {user?.name?.[0]?.toUpperCase() || "C"}
+              </div>
+            )}
+            <span className="truncate font-semibold text-foreground">Portfolio Admin</span>
           </div>
 
           {/* Nav */}
@@ -224,9 +228,13 @@ export function AdminShell({ children, currentPath = "" }: AdminShellProps) {
           {/* User */}
           <div className="border-t border-border p-4">
             <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-sm font-semibold text-primary">
-                {user?.name?.[0]?.toUpperCase() || "A"}
-              </div>
+              {user?.avatar_url ? (
+                <img src={getImageUrl(user.avatar_url)} alt="" className="h-8 w-8 rounded-full object-cover ring-1 ring-border" />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-sm font-semibold text-primary">
+                  {user?.name?.[0]?.toUpperCase() || "A"}
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-foreground">{user?.name || "Admin"}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.role}</p>
