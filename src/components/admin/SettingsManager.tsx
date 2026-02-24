@@ -4,7 +4,8 @@ import type { AdminUser, SiteSettings } from "@/lib/api";
 import { useToast } from "./AdminShell";
 
 export function SettingsManager() {
-  const { addToast } = useToast();
+  const ctx = useToast();
+  const addToast = ctx?.addToast ?? (() => {});
   const [loading, setLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<"profile" | "site" | "password">("profile");
   const [saving, setSaving] = React.useState(false);
@@ -16,6 +17,8 @@ export function SettingsManager() {
 
   const [profileForm, setProfileForm] = React.useState({ name: "", email: "", bio: "" });
   const [siteForm, setSiteForm] = React.useState<SiteSettings>({});
+  const [heroImageFile, setHeroImageFile] = React.useState<File | null>(null);
+  const [heroImagePreview, setHeroImagePreview] = React.useState("");
   const [passwordForm, setPasswordForm] = React.useState({ current: "", next: "", confirm: "" });
 
   React.useEffect(() => {
@@ -23,8 +26,12 @@ export function SettingsManager() {
       if (meRes.success && meRes.data) {
         const u = meRes.data as AdminUser;
         setUser(u);
-        setProfileForm({ name: u.name || "", email: u.email || "", bio: u.bio || "" });
-        if (u.avatar_url) setAvatarPreview(getImageUrl(u.avatar_url));
+        setProfileForm({
+          name: u?.name != null ? String(u.name) : "",
+          email: u?.email != null ? String(u.email) : "",
+          bio: u?.bio != null ? String(u.bio) : "",
+        });
+        if (u?.avatar_url) setAvatarPreview(getImageUrl(u.avatar_url));
       }
       if (settingsRes.success && settingsRes.data) {
         setSiteForm(settingsRes.data as SiteSettings);
@@ -37,10 +44,11 @@ export function SettingsManager() {
     setSaving(true);
     try {
       const fd = new FormData();
-      fd.append("name", profileForm.name);
-      fd.append("email", profileForm.email);
-      fd.append("bio", profileForm.bio);
+      fd.append("name", String(profileForm.name ?? ""));
+      fd.append("email", String(profileForm.email ?? ""));
+      fd.append("bio", String(profileForm.bio ?? ""));
       if (avatarFile) fd.append("avatar", avatarFile);
+      if (cvFile) fd.append("cv", cvFile);
 
       const res = await adminApi.updateProfile(fd);
       if (res.success) {
@@ -48,30 +56,18 @@ export function SettingsManager() {
         if (res.data) {
           const u = res.data as AdminUser;
           setUser(u);
-          setProfileForm({ name: u.name || "", email: u.email || "", bio: u.bio || "" });
-          setAvatarPreview(u.avatar_url ? getImageUrl(u.avatar_url) : "");
+          setProfileForm({
+            name: u?.name != null ? String(u.name) : "",
+            email: u?.email != null ? String(u.email) : "",
+            bio: u?.bio != null ? String(u.bio) : "",
+          });
+          setAvatarPreview(u?.avatar_url ? getImageUrl(u.avatar_url) : "");
           setAvatarFile(null);
+          setCvFile(null);
         }
       } else {
-        addToast("error", res.message || "Failed to update profile");
-      }
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function saveCv() {
-    if (!cvFile) return;
-    setSaving(true);
-    try {
-      const fd = new FormData();
-      fd.append("cv", cvFile);
-      const res = await adminApi.uploadCv(fd);
-      if (res.success) {
-        addToast("success", "CV uploaded!");
-        setCvFile(null);
-      } else {
-        addToast("error", "Failed to upload CV");
+        const msg = res.errors?.[0]?.msg ?? res.errors?.[0]?.message ?? res.message ?? "Failed to update profile";
+        addToast("error", String(msg));
       }
     } finally {
       setSaving(false);
@@ -82,9 +78,25 @@ export function SettingsManager() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await adminApi.updateSettings(siteForm);
+      let res: { success: boolean; data?: SiteSettings; message?: string };
+      if (heroImageFile) {
+        const fd = new FormData();
+        const keys: (keyof SiteSettings)[] = [
+          "hero_badge", "hero_title", "hero_subtitle", "hero_cta_primary", "hero_cta_secondary",
+          "about_bio", "about_years", "about_projects", "about_stack",
+          "contact_email", "contact_github", "contact_linkedin", "footer_copyright",
+        ];
+        keys.forEach((k) => fd.append(String(k), String(siteForm[k] ?? "")));
+        fd.append("hero_image", heroImageFile);
+        res = await adminApi.updateSettingsFormData(fd);
+      } else {
+        res = await adminApi.updateSettings(siteForm);
+      }
       if (res.success) {
         addToast("success", "Site settings saved!");
+        if (res.data) setSiteForm(res.data);
+        setHeroImageFile(null);
+        setHeroImagePreview("");
       } else {
         addToast("error", res.message || "Failed to save settings");
       }
@@ -178,40 +190,37 @@ export function SettingsManager() {
             <div>
               <label className={labelClass}>Name</label>
               <input className={inputClass} placeholder="Your name"
-                value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} />
+                value={profileForm.name ?? ""} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} />
             </div>
             <div>
               <label className={labelClass}>Email</label>
               <input type="email" className={inputClass} placeholder="your@email.com"
-                value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} />
+                value={profileForm.email ?? ""} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} />
             </div>
             <div className="md:col-span-2">
               <label className={labelClass}>Bio</label>
               <textarea rows={3} className={inputClass} placeholder="Brief bio..."
-                value={profileForm.bio} onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })} />
+                value={profileForm.bio ?? ""} onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })} />
             </div>
           </div>
 
-          {/* CV Upload */}
+          {/* CV: pilih file lalu simpan dengan Save Profile */}
           <div className="rounded-xl border border-border bg-white/5 p-4">
             <label className={labelClass}>CV / Resume</label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {user?.cv_url && (
-                <a href={getImageUrl(user.cv_url)} target="_blank" rel="noopener noreferrer"
+                <a href={getImageUrl(user?.cv_url ?? "")} target="_blank" rel="noopener noreferrer"
                   className="text-sm text-primary hover:underline">
                   View current CV
                 </a>
               )}
               <label className="cursor-pointer rounded-lg border border-dashed border-border px-4 py-2 text-sm text-muted-foreground hover:border-primary/40 transition-colors">
-                {cvFile ? cvFile.name : "Upload new CV (PDF)"}
+                {cvFile ? cvFile.name : "Pilih file CV (PDF)"}
                 <input type="file" accept=".pdf" className="hidden"
                   onChange={(e) => setCvFile(e.target.files?.[0] || null)} />
               </label>
               {cvFile && (
-                <button type="button" onClick={saveCv} disabled={saving}
-                  className="rounded-lg bg-primary/20 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/30 disabled:opacity-60">
-                  Upload
-                </button>
+                <span className="text-xs text-muted-foreground">Klik &quot;Save Profile&quot; di bawah untuk menyimpan CV.</span>
               )}
             </div>
           </div>
@@ -231,26 +240,62 @@ export function SettingsManager() {
 
           <div className="space-y-4">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Hero Section</h3>
+            <p className="text-xs text-muted-foreground">Konten ini tampil di bagian teratas halaman utama. Simpan untuk mengupdate tampilan di website.</p>
             <div>
-              <label className={labelClass}>Hero Title</label>
-              <input className={inputClass} placeholder="Building Scalable & Modern Web Applications"
-                value={siteForm.hero_title || ""} onChange={(e) => setSiteForm({ ...siteForm, hero_title: e.target.value })} />
+              <label className={labelClass}>Badge / Tagline (teks kecil di atas judul)</label>
+              <input className={inputClass} placeholder="Web Developer"
+                value={siteForm.hero_badge ?? ""} onChange={(e) => setSiteForm({ ...siteForm, hero_badge: e.target.value })} />
             </div>
             <div>
-              <label className={labelClass}>Hero Subtitle</label>
-              <textarea rows={2} className={inputClass}
-                value={siteForm.hero_subtitle || ""} onChange={(e) => setSiteForm({ ...siteForm, hero_subtitle: e.target.value })} />
+              <label className={labelClass}>Judul Hero</label>
+              <input className={inputClass} placeholder="Building Scalable & Modern Web Applications"
+                value={siteForm.hero_title ?? ""} onChange={(e) => setSiteForm({ ...siteForm, hero_title: e.target.value })} />
+              <p className="mt-1 text-xs text-muted-foreground">Gunakan &amp; untuk memisahkan bagian yang diberi gradient (contoh: Building &amp; Modern Web Apps).</p>
+            </div>
+            <div>
+              <label className={labelClass}>Subtitle / Deskripsi</label>
+              <textarea rows={3} className={inputClass} placeholder="I craft performant, accessible web experiences..."
+                value={siteForm.hero_subtitle ?? ""} onChange={(e) => setSiteForm({ ...siteForm, hero_subtitle: e.target.value })} />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className={labelClass}>CTA Primary Button</label>
+                <label className={labelClass}>Teks Tombol Utama</label>
                 <input className={inputClass} placeholder="View Projects"
-                  value={siteForm.hero_cta_primary || ""} onChange={(e) => setSiteForm({ ...siteForm, hero_cta_primary: e.target.value })} />
+                  value={siteForm.hero_cta_primary ?? ""} onChange={(e) => setSiteForm({ ...siteForm, hero_cta_primary: e.target.value })} />
               </div>
               <div>
-                <label className={labelClass}>CTA Secondary Button</label>
+                <label className={labelClass}>Teks Tombol Sekunder (Download CV)</label>
                 <input className={inputClass} placeholder="Download CV"
-                  value={siteForm.hero_cta_secondary || ""} onChange={(e) => setSiteForm({ ...siteForm, hero_cta_secondary: e.target.value })} />
+                  value={siteForm.hero_cta_secondary ?? ""} onChange={(e) => setSiteForm({ ...siteForm, hero_cta_secondary: e.target.value })} />
+              </div>
+            </div>
+            <div>
+              <label className={labelClass}>Foto Hero (gambar di sisi kanan)</label>
+              <div className="flex flex-wrap items-center gap-4">
+                {(heroImagePreview || siteForm.hero_image_url) && (
+                  <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-border bg-card/50">
+                    <img
+                      src={heroImagePreview || getImageUrl(siteForm.hero_image_url ?? "")}
+                      alt="Hero preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+                <label className="cursor-pointer rounded-lg border border-dashed border-border px-4 py-2 text-sm text-muted-foreground hover:border-primary/40 transition-colors">
+                  {heroImageFile ? heroImageFile.name : "Pilih gambar"}
+                  <input type="file" accept="image/*" className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) {
+                        if (heroImagePreview && heroImagePreview.startsWith("blob:")) URL.revokeObjectURL(heroImagePreview);
+                        setHeroImageFile(f);
+                        setHeroImagePreview(URL.createObjectURL(f));
+                      }
+                    }} />
+                </label>
+                {heroImageFile && (
+                  <span className="text-xs text-muted-foreground">Klik &quot;Save Site Settings&quot; untuk menyimpan.</span>
+                )}
               </div>
             </div>
           </div>
