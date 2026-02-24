@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.PUBLIC_API_URL || "http://localhost:4000";
+import { API_BASE } from "./env";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -159,6 +159,8 @@ export const publicApi = {
   getTestimonials: () => apiFetch<Testimonial[]>("/api/testimonials"),
   getSeo: () => apiFetch<SeoSettings>("/api/seo"),
   getSettings: () => apiFetch<SiteSettings>("/api/settings"),
+  getPublicProfile: () =>
+    apiFetch<{ name: string; avatar_url: string | null }>("/api/public-profile"),
   submitContact: (body: { name: string; email: string; message: string }) =>
     apiFetch("/api/messages", { method: "POST", body: JSON.stringify(body) }),
 };
@@ -254,4 +256,19 @@ export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("http")) return path;
   return `${API_BASE}${path}`;
+}
+
+/** Public profile (name, avatar) for navbar/header — no auth. */
+export interface PublicProfile {
+  name: string;
+  avatar_url: string | null;
+}
+
+export async function fetchPublicProfile(): Promise<PublicProfile | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/public-profile`).then((r) => r.json());
+    return res?.success && res?.data ? (res.data as PublicProfile) : null;
+  } catch {
+    return null;
+  }
 }
