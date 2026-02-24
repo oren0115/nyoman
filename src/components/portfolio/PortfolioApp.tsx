@@ -1,5 +1,5 @@
 import * as React from "react";
-import { publicApi, getImageUrl } from "@/lib/api";
+import { publicApi, getImageUrl, fetchPublicProfile } from "@/lib/api";
 import type {
   Project, Skill, Experience, Testimonial, SiteSettings,
 } from "@/lib/api";
@@ -15,7 +15,7 @@ function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-white/5 ${className}`} />;
 }
 
-function HeroSection({ settings }: { settings: SiteSettings }) {
+function HeroSection({ settings, cvUrl }: { settings: SiteSettings; cvUrl?: string | null }) {
   return (
     <section
       id="home"
@@ -43,7 +43,7 @@ function HeroSection({ settings }: { settings: SiteSettings }) {
       <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 md:flex-row md:items-center md:justify-between md:gap-12 md:px-6">
         <div className="max-w-2xl text-center md:text-left">
           <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-primary">
-            Web Developer
+            {settings.hero_badge || "Web Developer"}
           </p>
           <h1 className="mb-6 text-4xl font-bold leading-[1.15] tracking-tight text-foreground md:text-5xl lg:text-6xl">
             {settings.hero_title
@@ -75,29 +75,46 @@ function HeroSection({ settings }: { settings: SiteSettings }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </a>
-            <a
-              href="/cv.pdf"
-              download
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/50 px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-white/5"
-            >
-              {settings.hero_cta_secondary || "Download CV"}
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-            </a>
+            {cvUrl ? (
+              <a
+                href={getImageUrl(cvUrl)}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/50 px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-white/5"
+              >
+                {settings.hero_cta_secondary || "Download CV"}
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </a>
+            ) : (
+              <span className="inline-flex items-center gap-2 rounded-lg border border-border/50 bg-card/30 px-6 py-3 text-base font-semibold text-muted-foreground">
+                {settings.hero_cta_secondary || "Download CV"}
+                <span className="text-xs font-normal">(upload in admin)</span>
+              </span>
+            )}
           </div>
         </div>
 
         <div className="mt-12 flex-shrink-0 md:mt-0 md:w-[380px] lg:w-[440px]" aria-hidden="true">
           <div className="relative mx-auto aspect-square max-w-[280px] md:max-w-none">
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary/30 to-cyan-400/30 blur-2xl" />
-            <div className="relative flex h-full w-full items-center justify-center rounded-3xl border border-white/10 bg-card/50 shadow-2xl backdrop-blur-sm">
-              <div className="flex h-3/4 w-3/4 flex-wrap items-center justify-center gap-4 p-6">
-                <div className="h-14 w-14 rounded-xl bg-primary/20 shadow-inner" />
-                <div className="h-12 w-12 rounded-lg bg-cyan-400/20 shadow-inner" />
-                <div className="h-16 w-16 rounded-2xl bg-primary/15 shadow-inner" />
-                <div className="h-10 w-10 rounded-lg bg-cyan-400/25 shadow-inner" />
-              </div>
+            <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-card/50 shadow-2xl backdrop-blur-sm">
+              {settings.hero_image_url ? (
+                <img
+                  src={getImageUrl(settings.hero_image_url)}
+                  alt=""
+                  className="h-full w-full object-cover object-center"
+                />
+              ) : (
+                <div className="flex h-3/4 w-3/4 flex-wrap items-center justify-center gap-4 p-6">
+                  <div className="h-14 w-14 rounded-xl bg-primary/20 shadow-inner" />
+                  <div className="h-12 w-12 rounded-lg bg-cyan-400/20 shadow-inner" />
+                  <div className="h-16 w-16 rounded-2xl bg-primary/15 shadow-inner" />
+                  <div className="h-10 w-10 rounded-lg bg-cyan-400/25 shadow-inner" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -400,7 +417,9 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
         setForm({ name: "", email: "", message: "" });
       } else {
         setStatus("error");
-        setErrorMsg(res.message || "Failed to send message");
+        const firstError = res.errors?.[0];
+        const detail = firstError?.msg ?? (firstError as { message?: string })?.message;
+        setErrorMsg(detail || res.message || "Failed to send message");
       }
     } catch {
       setStatus("error");
@@ -486,12 +505,14 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
             </div>
             <div>
               <label htmlFor="message" className="mb-2 block text-sm font-medium text-foreground">
-                Message
+                Message <span className="text-muted-foreground font-normal">(min. 10 characters)</span>
               </label>
               <textarea
                 id="message"
                 rows={4}
                 required
+                minLength={10}
+                maxLength={2000}
                 className={inputClass}
                 placeholder="Tell me about your project..."
                 value={form.message}
@@ -562,40 +583,46 @@ export function PortfolioApp() {
     skills: Skill[];
     experiences: Experience[];
     testimonials: Testimonial[];
+    cvUrl: string | null;
   }>({
     settings: {},
     projects: [],
     skills: [],
     experiences: [],
     testimonials: [],
+    cvUrl: null,
   });
 
   React.useEffect(() => {
     async function load() {
       try {
-        const [settingsRes, projectsRes, skillsRes, expRes, testiRes] = await Promise.allSettled([
+        const [settingsRes, projectsRes, skillsRes, expRes, testiRes, profileRes] = await Promise.allSettled([
           publicApi.getSettings(),
           publicApi.getProjects({ limit: 12 }),
           publicApi.getSkills(),
           publicApi.getExperiences(),
           publicApi.getTestimonials(),
+          fetchPublicProfile(),
         ]);
 
         if (projectsRes.status === "rejected") {
           console.error("[Portfolio] Projects fetch failed:", projectsRes.reason);
         } else if (projectsRes.value?.success === false) {
-          console.warn("[Portfolio] Projects API error:", projectsRes.value.message);
+          console.warn("[Portfolio] Projects API error:", (projectsRes.value as { message?: string }).message);
         }
 
-        const rawProjects = projectsRes.status === "fulfilled" ? projectsRes.value?.data : undefined;
+        const rawProjects = projectsRes.status === "fulfilled" ? (projectsRes.value as { data?: unknown })?.data : undefined;
         const projectsList = Array.isArray(rawProjects) ? rawProjects : [];
+        const publicProfile = profileRes.status === "fulfilled" ? profileRes.value : null;
+        const cvUrl = publicProfile?.cv_url ?? null;
 
         setData({
-          settings: settingsRes.status === "fulfilled" ? (settingsRes.value?.data || {}) : {},
+          settings: settingsRes.status === "fulfilled" ? ((settingsRes.value as { data?: SiteSettings })?.data || {}) : {},
           projects: projectsList,
-          skills: skillsRes.status === "fulfilled" ? (skillsRes.value?.data || []) : [],
-          experiences: expRes.status === "fulfilled" ? (expRes.value?.data || []) : [],
-          testimonials: testiRes.status === "fulfilled" ? (testiRes.value?.data || []) : [],
+          skills: skillsRes.status === "fulfilled" ? ((skillsRes.value as { data?: Skill[] })?.data || []) : [],
+          experiences: expRes.status === "fulfilled" ? ((expRes.value as { data?: Experience[] })?.data || []) : [],
+          testimonials: testiRes.status === "fulfilled" ? ((testiRes.value as { data?: Testimonial[] })?.data || []) : [],
+          cvUrl,
         });
       } finally {
         setLoading(false);
@@ -617,7 +644,7 @@ export function PortfolioApp() {
 
   return (
     <>
-      <HeroSection settings={data.settings} />
+      <HeroSection settings={data.settings} cvUrl={data.cvUrl} />
 
       {/* About section is static in Astro for SSG — dynamic data injected below */}  
 
