@@ -69,6 +69,19 @@ export interface Certificate {
   order_index: number;
 }
 
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  body: string;
+  image_url: string | null;
+  status: "draft" | "published";
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SeoSettings {
   id: number;
   site_title: string;
@@ -171,6 +184,13 @@ export const publicApi = {
   getExperiences: () => apiFetch<Experience[]>("/api/experience"),
   getTestimonials: () => apiFetch<Testimonial[]>("/api/testimonials"),
   getCertificates: () => apiFetch<Certificate[]>("/api/certificates"),
+  getPosts: (params?: { page?: number; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.set("page", String(params.page));
+    if (params?.limit) q.set("limit", String(params.limit));
+    return apiFetch<Post[]>(`/api/posts?${q}`);
+  },
+  getPost: (slug: string) => apiFetch<Post>(`/api/posts/${slug}`),
   getSeo: () => apiFetch<SeoSettings>("/api/seo"),
   getSettings: () => apiFetch<SiteSettings>("/api/settings"),
   getPublicProfile: () =>
@@ -240,6 +260,22 @@ export const adminApi = {
     apiFetch<Certificate>(`/api/certificates/${id}`, { method: "PATCH", body: data }),
   deleteCertificate: (id: number) =>
     apiFetch(`/api/certificates/${id}`, { method: "DELETE" }),
+
+  // Blog / Posts
+  getPosts: (params?: { status?: string; page?: number; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.status) q.set("status", params.status);
+    if (params?.page) q.set("page", String(params.page));
+    if (params?.limit) q.set("limit", String(params.limit));
+    return apiFetch<Post[]>(`/api/posts?${q}`);
+  },
+  getPost: (slug: string) => apiFetch<Post>(`/api/posts/${slug}`),
+  createPost: (data: FormData) =>
+    apiFetch<Post>("/api/posts", { method: "POST", body: data }),
+  updatePost: (id: number, data: FormData) =>
+    apiFetch<Post>(`/api/posts/${id}`, { method: "PATCH", body: data }),
+  deletePost: (id: number) =>
+    apiFetch(`/api/posts/${id}`, { method: "DELETE" }),
 
   // Messages
   getMessages: (params?: { is_read?: boolean; page?: number }) => {

@@ -81,6 +81,17 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    href: "/admin/blog",
+    label: "Blog",
+    icon: (
+      <NavIcon>
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="h-5 w-5">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6m4-4h-1.5V4a1.5 1.5 0 10-3 0v1H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-1.5V4a1.5 1.5 0 10-3 0v1z" />
+        </svg>
+      </NavIcon>
+    ),
+  },
+  {
     href: "/admin/messages",
     label: "Messages",
     icon: (

@@ -1,12 +1,13 @@
 ---
 const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#certificates", label: "Sertifikat" },
-  { href: "#testimonials", label: "Testimonials" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#home", label: "Home" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#experience", label: "Experience" },
+  { href: "/#certificates", label: "Sertifikat" },
+  { href: "/#testimonials", label: "Testimonials" },
+  { href: "/blog", label: "Blog" },
+  { href: "/#contact", label: "Contact" },
 ];
 ---
 
@@ -16,7 +17,7 @@ const navLinks = [
   aria-label="Main navigation"
 >
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
-    <a href="#home" class="flex items-center gap-2 font-bold text-foreground transition-opacity hover:opacity-90">
+    <a href="/#home" class="flex items-center gap-2 font-bold text-foreground transition-opacity hover:opacity-90">
       <span id="navbar-logo-wrap" class="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-primary shadow-lg shadow-primary/30 ring-2 ring-primary/20">
         <img id="navbar-logo-img" src="" alt="" class="hidden h-full w-full object-cover" />
         <span id="navbar-logo-initial" class="text-xs font-extrabold text-primary-foreground">NA</span>
@@ -53,7 +54,7 @@ const navLinks = [
         </svg>
       </button>
       <a
-        href="#contact"
+        href="/#contact"
         class="btn-gradient inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold shadow-lg"
       >
         Hire Me
@@ -89,7 +90,7 @@ const navLinks = [
         </li>
       ))}
       <li class="mt-2">
-        <a href="#contact" class="btn-gradient block rounded-lg px-4 py-3 text-center font-semibold">
+        <a href="/#contact" class="btn-gradient block rounded-lg px-4 py-3 text-center font-semibold">
           Hire Me
         </a>
       </li>
@@ -176,8 +177,9 @@ const navLinks = [
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             navLinksEls.forEach((link) => {
-              const href = link.getAttribute("href");
-              if (href === `#${(entry.target as Element).id}`) {
+              const href = link.getAttribute("href") || "";
+              const sectionId = (entry.target as Element).id;
+              if (href === `#${sectionId}` || href === `/#${sectionId}`) {
                 link.classList.add("text-foreground");
                 link.classList.remove("text-muted-foreground");
               } else {
