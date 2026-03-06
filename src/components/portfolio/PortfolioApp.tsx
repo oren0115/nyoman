@@ -58,19 +58,18 @@ function HeroSection({ settings, cvUrl }: { settings: SiteSettings; cvUrl?: stri
                     </span>
                   )
                 )
-              : <>Building Scalable &amp; Modern{" "}<span className="portfolio-gradient-text">Web Applications</span></>
+              : <>Membangun Aplikasi Web Modern & <span className="portfolio-gradient-text">Scalable</span></>
             }
           </h1>
           <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-            {settings.hero_subtitle ||
-              "I craft performant, accessible web experiences with modern stacks."}
+            {settings.hero_subtitle || "Saya membuat pengalaman web yang performant dan aksesibel dengan stack modern."}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 md:justify-start">
             <a
               href="#projects"
               className="btn-gradient inline-flex items-center gap-2 rounded-lg px-6 py-3 text-base font-semibold shadow-lg"
             >
-              {settings.hero_cta_primary || "View Projects"}
+              {settings.hero_cta_primary || "Lihat Proyek"}
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -83,15 +82,15 @@ function HeroSection({ settings, cvUrl }: { settings: SiteSettings; cvUrl?: stri
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-lg border border-border bg-card/50 px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-white/5"
               >
-                {settings.hero_cta_secondary || "Download CV"}
+                {settings.hero_cta_secondary || "Unduh CV"}
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
               </a>
             ) : (
               <span className="inline-flex items-center gap-2 rounded-lg border border-border/50 bg-card/30 px-6 py-3 text-base font-semibold text-muted-foreground">
-                {settings.hero_cta_secondary || "Download CV"}
-                <span className="text-xs font-normal">(upload in admin)</span>
+                {settings.hero_cta_secondary || "Unduh CV"}
+                <span className="text-xs font-normal">(unggah di admin)</span>
               </span>
             )}
           </div>
@@ -145,10 +144,10 @@ function SkillsSection({ skills }: { skills: Skill[] }) {
           className="section-reveal mb-4 text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl"
           data-section-reveal
         >
-          Skills &amp; Tech Stack
+          Skills & Tech Stack
         </h2>
         <p className="section-reveal mx-auto mb-12 max-w-2xl text-center text-muted-foreground" data-section-reveal>
-          Technologies I use to build modern, scalable applications.
+          Teknologi yang saya gunakan untuk membangun aplikasi modern dan scalable.
         </p>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -197,10 +196,10 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
           className="section-reveal mb-4 text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl"
           data-section-reveal
         >
-          Featured Projects
+          Proyek Unggulan
         </h2>
         <p className="section-reveal mx-auto mb-12 max-w-2xl text-center text-muted-foreground" data-section-reveal>
-          A selection of projects I've built—from full-stack apps to developer tools.
+          Beberapa proyek yang telah saya buat—dari aplikasi full-stack hingga developer tools.
         </p>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -230,7 +229,7 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 {project.featured && (
                   <span className="absolute left-3 top-3 rounded-full bg-primary/90 px-2.5 py-0.5 text-xs font-semibold text-white backdrop-blur-sm">
-                    Featured
+                    Unggulan
                   </span>
                 )}
               </div>
@@ -257,7 +256,7 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-lg bg-primary/20 px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-primary/30"
                     >
-                      Live Demo
+                      Demo
                       <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
@@ -369,10 +368,10 @@ function ExperienceSection({ experiences }: { experiences: Experience[] }) {
           className="section-reveal mb-4 text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl"
           data-section-reveal
         >
-          Experience
+          Pengalaman
         </h2>
         <p className="section-reveal mx-auto mb-14 max-w-2xl text-center text-muted-foreground" data-section-reveal>
-          Roles and impact over the years.
+          Jalur karier dan kontribusi.
         </p>
 
         <div className="relative">
@@ -420,40 +419,40 @@ function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) 
           className="section-reveal mb-4 text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl"
           data-section-reveal
         >
-          What People Say
+          Apa Kata Mereka
         </h2>
         <p className="section-reveal mx-auto mb-12 max-w-2xl text-center text-muted-foreground" data-section-reveal>
-          Feedback from clients and collaborators.
+          Feedback dari klien dan rekan kolaborasi.
         </p>
 
         <div className="section-reveal" data-section-reveal>
           <Carousel opts={{ align: "start", loop: true }} className="mx-auto w-full max-w-2xl">
             <CarouselContent className="-ml-2 md:-ml-4">
-              {testimonials.map((t) => (
-                <CarouselItem key={t.id} className="pl-2 md:pl-4">
+              {testimonials.map((testimonial) => (
+                <CarouselItem key={testimonial.id} className="pl-2 md:pl-4">
                   <div className="card-hover-lift rounded-2xl border border-border bg-card/80 p-6 shadow-lg">
                     <div className="mb-3 flex gap-1">
-                      {Array.from({ length: t.rating }).map((_, i) => (
+                      {Array.from({ length: testimonial.rating }).map((_, i) => (
                         <svg key={i} className="h-4 w-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                       ))}
                     </div>
                     <blockquote className="text-lg leading-relaxed text-foreground md:text-xl">
-                      &ldquo;{t.feedback}&rdquo;
+                      &ldquo;{testimonial.feedback}&rdquo;
                     </blockquote>
                     <footer className="mt-4 flex items-center gap-3">
-                      {t.avatar_url && (
+                      {testimonial.avatar_url && (
                         <img
-                          src={getImageUrl(t.avatar_url)}
-                          alt={t.client_name}
+                          src={getImageUrl(testimonial.avatar_url)}
+                          alt={testimonial.client_name}
                           className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/30"
                         />
                       )}
                       <cite className="not-italic">
-                        <span className="font-semibold text-foreground">{t.client_name}</span>
-                        {t.company && (
-                          <span className="text-muted-foreground"> — {t.company}</span>
+                        <span className="font-semibold text-foreground">{testimonial.client_name}</span>
+                        {testimonial.company && (
+                          <span className="text-muted-foreground"> — {testimonial.company}</span>
                         )}
                       </cite>
                     </footer>
@@ -489,11 +488,11 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
         setStatus("error");
         const firstError = res.errors?.[0];
         const detail = firstError?.msg ?? (firstError as { message?: string })?.message;
-        setErrorMsg(detail || res.message || "Failed to send message");
+        setErrorMsg(detail || res.message || "Gagal mengirim pesan.");
       }
     } catch {
       setStatus("error");
-      setErrorMsg("Network error. Please try again.");
+      setErrorMsg("Error jaringan. Silakan coba lagi.");
     }
   }
 
@@ -512,10 +511,10 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
           className="section-reveal mb-4 text-3xl font-bold tracking-tight text-foreground md:text-4xl"
           data-section-reveal
         >
-          Let's Build Something Great Together
+          Mari Bangun Sesuatu Hebat Bersama
         </h2>
         <p className="section-reveal mb-10 text-muted-foreground" data-section-reveal>
-          Have a project in mind? Get in touch—I'd love to hear about it.
+          Punya proyek dalam pikiran? Hubungi saya—saya ingin mendengarnya.
         </p>
 
         {status === "success" ? (
@@ -523,13 +522,13 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
             <svg className="mx-auto mb-4 h-12 w-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="mb-2 text-xl font-semibold text-foreground">Message sent!</h3>
-            <p className="text-muted-foreground">I'll get back to you as soon as possible.</p>
+            <h3 className="mb-2 text-xl font-semibold text-foreground">Pesan terkirim!</h3>
+            <p className="text-muted-foreground">Saya akan membalas segera.</p>
             <button
               onClick={() => setStatus("idle")}
               className="mt-6 rounded-lg px-6 py-2 text-sm font-medium text-primary hover:underline"
             >
-              Send another message
+              Kirim pesan lagi
             </button>
           </div>
         ) : (
@@ -545,7 +544,7 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
             )}
             <div>
               <label htmlFor="name" className="mb-2 block text-sm font-medium text-foreground">
-                Name
+                Nama
               </label>
               <input
                 type="text"
@@ -553,7 +552,7 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
                 required
                 autoComplete="name"
                 className={inputClass}
-                placeholder="Your name"
+                placeholder="Nama Anda"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
@@ -575,7 +574,7 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
             </div>
             <div>
               <label htmlFor="message" className="mb-2 block text-sm font-medium text-foreground">
-                Message <span className="text-muted-foreground font-normal">(min. 10 characters)</span>
+                Pesan <span className="text-muted-foreground font-normal">(min. 10 karakter)</span>
               </label>
               <textarea
                 id="message"
@@ -584,7 +583,7 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
                 minLength={10}
                 maxLength={2000}
                 className={inputClass}
-                placeholder="Tell me about your project..."
+                placeholder="Ceritakan tentang proyek Anda..."
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
@@ -601,10 +600,10 @@ function ContactSection({ settings }: { settings: SiteSettings }) {
                       <circle className="opacity-25" cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Sending...
+                    Mengirim...
                   </>
                 ) : (
-                  "Send Message"
+                  "Kirim Pesan"
                 )}
               </button>
             </div>
@@ -666,6 +665,12 @@ export function PortfolioApp() {
   });
 
   React.useEffect(() => {
+    let cancelled = false;
+    const timeoutId = window.setTimeout(() => {
+      if (cancelled) return;
+      setLoading(false);
+    }, 10000);
+
     async function load() {
       try {
         const [settingsRes, projectsRes, skillsRes, expRes, certRes, testiRes, profileRes] = await Promise.allSettled([
@@ -678,6 +683,7 @@ export function PortfolioApp() {
           fetchPublicProfile(),
         ]);
 
+        if (cancelled) return;
         if (projectsRes.status === "rejected") {
           console.error("[Portfolio] Projects fetch failed:", projectsRes.reason);
         } else if (projectsRes.value?.success === false) {
@@ -687,7 +693,7 @@ export function PortfolioApp() {
         const rawProjects = projectsRes.status === "fulfilled" ? (projectsRes.value as { data?: unknown })?.data : undefined;
         const projectsList = Array.isArray(rawProjects) ? rawProjects : [];
         const publicProfile = profileRes.status === "fulfilled" ? profileRes.value : null;
-        const cvUrl = publicProfile?.cv_url ?? null;
+        const cvUrl = publicProfile && typeof publicProfile === "object" && "cv_url" in publicProfile ? (publicProfile as { cv_url?: string | null }).cv_url ?? null : null;
 
         setData({
           settings: settingsRes.status === "fulfilled" ? ((settingsRes.value as { data?: SiteSettings })?.data || {}) : {},
@@ -698,11 +704,17 @@ export function PortfolioApp() {
           testimonials: testiRes.status === "fulfilled" ? ((testiRes.value as { data?: Testimonial[] })?.data || []) : [],
           cvUrl,
         });
+      } catch (err) {
+        console.error("[Portfolio] Load error:", err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     load();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   if (loading) {
