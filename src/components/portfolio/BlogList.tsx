@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { publicApi, getImageUrl } from "@/lib/api";
 import type { Post } from "@/lib/api";
 
@@ -35,7 +36,7 @@ export function BlogList() {
       <div className="space-y-8">
         {posts.map((post) => (
           <article key={post.id} className="rounded-2xl border border-border bg-card/50 overflow-hidden transition-shadow hover:shadow-lg">
-            <a href={`/blog/${post.slug}`} className="block">
+            <Link to={`/blog/${post.slug}`} className="block">
               {post.image_url && (
                 <div className="aspect-video w-full overflow-hidden bg-white/5">
                   <img src={getImageUrl(post.image_url)} alt="" className="h-full w-full object-cover transition-transform hover:scale-105" loading="lazy" />
@@ -48,7 +49,7 @@ export function BlogList() {
                   {post.published_at ? new Date(post.published_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : "Draft"}
                 </p>
               </div>
-            </a>
+            </Link>
           </article>
         ))}
       </div>
