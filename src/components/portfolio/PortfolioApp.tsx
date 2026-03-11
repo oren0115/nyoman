@@ -1,5 +1,5 @@
 import * as React from "react";
-import { publicApi, getImageUrl, fetchPublicProfile } from "@/lib/api";
+import { publicApi, getImageUrl, fetchPublicProfile, API_BASE } from "@/lib/api";
 import type {
   Project, Skill, Experience, Testimonial, Certificate, SiteSettings,
 } from "@/lib/api";
@@ -695,13 +695,20 @@ export function PortfolioApp() {
         const publicProfile = profileRes.status === "fulfilled" ? profileRes.value : null;
         const cvUrl = publicProfile && typeof publicProfile === "object" && "cv_url" in publicProfile ? (publicProfile as { cv_url?: string | null }).cv_url ?? null : null;
 
+        const skillsList = skillsRes.status === "fulfilled" ? ((skillsRes.value as { data?: Skill[] })?.data || []) : [];
+        const expList = expRes.status === "fulfilled" ? ((expRes.value as { data?: Experience[] })?.data || []) : [];
+        const certList = certRes.status === "fulfilled" ? ((certRes.value as { data?: Certificate[] })?.data || []) : [];
+        const testiList = testiRes.status === "fulfilled" ? ((testiRes.value as { data?: Testimonial[] })?.data || []) : [];
+        if (import.meta.env.DEV && [projectsList, skillsList, expList, certList, testiList].every((a) => a.length === 0)) {
+          console.warn("[Portfolio] All API data empty. Backend:", API_BASE, "— Pastikan backend jalan dan project status = Published.");
+        }
         setData({
           settings: settingsRes.status === "fulfilled" ? ((settingsRes.value as { data?: SiteSettings })?.data || {}) : {},
           projects: projectsList,
-          skills: skillsRes.status === "fulfilled" ? ((skillsRes.value as { data?: Skill[] })?.data || []) : [],
-          experiences: expRes.status === "fulfilled" ? ((expRes.value as { data?: Experience[] })?.data || []) : [],
-          certificates: certRes.status === "fulfilled" ? ((certRes.value as { data?: Certificate[] })?.data || []) : [],
-          testimonials: testiRes.status === "fulfilled" ? ((testiRes.value as { data?: Testimonial[] })?.data || []) : [],
+          skills: skillsList,
+          experiences: expList,
+          certificates: certList,
+          testimonials: testiList,
           cvUrl,
         });
       } catch (err) {

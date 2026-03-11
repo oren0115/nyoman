@@ -1,4 +1,5 @@
 import { API_BASE } from "./env";
+export { API_BASE };
 
 export interface ApiResponse<T> {
   success: boolean;

@@ -9,6 +9,8 @@ export default defineConfig({
     alias: { "@": path.resolve(__dirname, "./src") },
   },
   define: {
-    "import.meta.env.VITE_PUBLIC_API_URL": JSON.stringify(process.env.VITE_PUBLIC_API_URL ?? ""),
+    "import.meta.env.VITE_PUBLIC_API_URL": JSON.stringify(
+      (process.env.VITE_PUBLIC_API_URL?.trim() || "http://localhost:4000").replace(/\/$/, "")
+    ),
   },
 });
