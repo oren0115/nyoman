@@ -150,6 +150,9 @@ function SkillsSection({ skills }: { skills: Skill[] }) {
           Teknologi yang saya gunakan untuk membangun aplikasi modern dan scalable.
         </p>
 
+        {skills.length === 0 ? (
+          <p className="section-reveal text-center text-muted-foreground" data-section-reveal>Belum ada data skill.</p>
+        ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {grouped.map(([cat, items], i) => (
             <div
@@ -178,6 +181,7 @@ function SkillsSection({ skills }: { skills: Skill[] }) {
             </div>
           ))}
         </div>
+        )}
       </div>
     </section>
   );
@@ -202,6 +206,9 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
           Beberapa proyek yang telah saya buat—dari aplikasi full-stack hingga developer tools.
         </p>
 
+        {projects.length === 0 ? (
+          <p className="section-reveal text-center text-muted-foreground" data-section-reveal>Belum ada proyek ditampilkan.</p>
+        ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <article
@@ -280,6 +287,7 @@ function ProjectsSection({ projects }: { projects: Project[] }) {
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );
@@ -304,6 +312,9 @@ function CertificatesSection({ certificates }: { certificates: Certificate[] }) 
           Sertifikat dan credential yang telah diperoleh.
         </p>
 
+        {certificates.length === 0 ? (
+          <p className="section-reveal text-center text-muted-foreground" data-section-reveal>Belum ada sertifikat.</p>
+        ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {certificates.map((cert) => (
             <article
@@ -350,6 +361,7 @@ function CertificatesSection({ certificates }: { certificates: Certificate[] }) 
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );
@@ -374,6 +386,9 @@ function ExperienceSection({ experiences }: { experiences: Experience[] }) {
           Jalur karier dan kontribusi.
         </p>
 
+        {experiences.length === 0 ? (
+          <p className="section-reveal text-center text-muted-foreground" data-section-reveal>Belum ada pengalaman.</p>
+        ) : (
         <div className="relative">
           <div className="absolute bottom-0 left-4 top-0 w-px bg-gradient-to-b from-primary/50 via-primary/30 to-transparent md:left-1/2 md:-translate-x-px" aria-hidden="true" />
           <ul className="space-y-12" role="list">
@@ -399,14 +414,13 @@ function ExperienceSection({ experiences }: { experiences: Experience[] }) {
             ))}
           </ul>
         </div>
+        )}
       </div>
     </section>
   );
 }
 
 function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
-  if (!testimonials.length) return null;
-
   return (
     <section
       id="testimonials"
@@ -425,6 +439,9 @@ function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) 
           Feedback dari klien dan rekan kolaborasi.
         </p>
 
+        {testimonials.length === 0 ? (
+          <p className="section-reveal text-center text-muted-foreground" data-section-reveal>Belum ada testimoni.</p>
+        ) : (
         <div className="section-reveal" data-section-reveal>
           <Carousel opts={{ align: "start", loop: true }} className="mx-auto w-full max-w-2xl">
             <CarouselContent className="-ml-2 md:-ml-4">
@@ -464,6 +481,7 @@ function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) 
             <CarouselNext className="-right-2 border-border bg-card/80 text-foreground hover:bg-card md:-right-12" />
           </Carousel>
         </div>
+        )}
       </div>
     </section>
   );
@@ -665,6 +683,33 @@ export function PortfolioApp() {
   });
 
   React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const observe = () => {
+      document.querySelectorAll("[data-section-reveal]").forEach((el) => observer.observe(el));
+    };
+
+    observe();
+    const mutationObserver = new MutationObserver(observe);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
     let cancelled = false;
     const timeoutId = window.setTimeout(() => {
       if (cancelled) return;
@@ -690,15 +735,22 @@ export function PortfolioApp() {
           console.warn("[Portfolio] Projects API error:", (projectsRes.value as { message?: string }).message);
         }
 
+        function toArray<T>(raw: unknown): T[] {
+          if (Array.isArray(raw)) return raw as T[];
+          if (raw && typeof raw === "object" && "data" in raw && Array.isArray((raw as { data: unknown }).data)) {
+            return (raw as { data: T[] }).data;
+          }
+          return [];
+        }
         const rawProjects = projectsRes.status === "fulfilled" ? (projectsRes.value as { data?: unknown })?.data : undefined;
-        const projectsList = Array.isArray(rawProjects) ? rawProjects : [];
+        const projectsList = toArray<Project>(rawProjects);
         const publicProfile = profileRes.status === "fulfilled" ? profileRes.value : null;
         const cvUrl = publicProfile && typeof publicProfile === "object" && "cv_url" in publicProfile ? (publicProfile as { cv_url?: string | null }).cv_url ?? null : null;
 
-        const skillsList = skillsRes.status === "fulfilled" ? ((skillsRes.value as { data?: Skill[] })?.data || []) : [];
-        const expList = expRes.status === "fulfilled" ? ((expRes.value as { data?: Experience[] })?.data || []) : [];
-        const certList = certRes.status === "fulfilled" ? ((certRes.value as { data?: Certificate[] })?.data || []) : [];
-        const testiList = testiRes.status === "fulfilled" ? ((testiRes.value as { data?: Testimonial[] })?.data || []) : [];
+        const skillsList = skillsRes.status === "fulfilled" ? toArray<Skill>((skillsRes.value as { data?: unknown })?.data) : [];
+        const expList = expRes.status === "fulfilled" ? toArray<Experience>((expRes.value as { data?: unknown })?.data) : [];
+        const certList = certRes.status === "fulfilled" ? toArray<Certificate>((certRes.value as { data?: unknown })?.data) : [];
+        const testiList = testiRes.status === "fulfilled" ? toArray<Testimonial>((testiRes.value as { data?: unknown })?.data) : [];
         if (import.meta.env.DEV && [projectsList, skillsList, expList, certList, testiList].every((a) => a.length === 0)) {
           console.warn("[Portfolio] All API data empty. Backend:", API_BASE, "— Pastikan backend jalan dan project status = Published.");
         }
@@ -726,10 +778,48 @@ export function PortfolioApp() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="space-y-4 text-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto" />
-          <p className="text-sm text-muted-foreground">Loading portfolio...</p>
+      <div className="min-h-screen pb-16 pt-20 md:pb-24 md:pt-28">
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          {/* Hero skeleton */}
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-12">
+            <div className="max-w-2xl space-y-4">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-10 w-full max-w-md" />
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-4/5" />
+              <div className="flex gap-3 pt-2">
+                <Skeleton className="h-11 w-32 rounded-lg" />
+                <Skeleton className="h-11 w-28 rounded-lg" />
+              </div>
+            </div>
+            <Skeleton className="mt-8 aspect-square max-w-[280px] rounded-3xl md:mt-0 md:max-w-[340px]" />
+          </div>
+          {/* Section skeletons */}
+          <div className="mt-20 space-y-12 border-t border-border pt-20">
+            <div>
+              <Skeleton className="mx-auto mb-3 h-8 w-48" />
+              <Skeleton className="mx-auto mb-8 h-5 max-w-xl" />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-40 rounded-2xl" />
+                ))}
+              </div>
+            </div>
+            <div>
+              <Skeleton className="mx-auto mb-3 h-8 w-40" />
+              <Skeleton className="mx-auto mb-8 h-5 max-w-md" />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="space-y-3">
+                    <Skeleton className="aspect-video rounded-2xl" />
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -741,15 +831,11 @@ export function PortfolioApp() {
 
       {/* About section is static in Astro for SSG — dynamic data injected below */}  
 
-      {data.skills.length > 0 && <SkillsSection skills={data.skills} />}
-
-      {data.projects.length > 0 && <ProjectsSection projects={data.projects} />}
-
-      {data.experiences.length > 0 && <ExperienceSection experiences={data.experiences} />}
-
-      {data.certificates.length > 0 && <CertificatesSection certificates={data.certificates} />}
-
-      {data.testimonials.length > 0 && <TestimonialsSection testimonials={data.testimonials} />}
+      <SkillsSection skills={data.skills} />
+      <ProjectsSection projects={data.projects} />
+      <ExperienceSection experiences={data.experiences} />
+      <CertificatesSection certificates={data.certificates} />
+      <TestimonialsSection testimonials={data.testimonials} />
 
       <ContactSection settings={data.settings} />
     </>
